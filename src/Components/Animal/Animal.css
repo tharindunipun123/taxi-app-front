@@ -1,0 +1,249 @@
+/* Driver App Container */
+.driver-app-container {
+  padding: 20px;
+  background-color: #f5f5f5;
+  min-height: calc(100vh - 60px); /* Adjust based on your navbar height */
+}
+
+/* Section Titles */
+.driver-app-container h1 {
+  font-size: 24px;
+  font-weight: 500;
+  color: #333;
+  margin: 0 0 20px 0;
+}
+
+.driver-app-container h2 {
+  font-size: 20px;
+  font-weight: 500;
+  color: #333;
+  margin: 0 0 20px 0;
+}
+
+/* Driver Applications Section */
+.driver-applications-section {
+  margin-bottom: 30px;
+}
+
+/* Application Table */
+.app-table-container {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+  margin-bottom: 30px;
+}
+
+.app-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.app-table th, 
+.app-table td {
+  padding: 16px;
+  border-bottom: 1px solid #f2f2f2;
+}
+
+.app-table th {
+  background-color: #ffffff;
+  color: #666;
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.app-table tbody tr:hover {
+  background-color: #f9f9f9;
+}
+
+/* Driver Name Cell */
+.driver-name-cell {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.driver-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.driver-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.name {
+  font-weight: 500;
+  color: #333;
+}
+
+.email {
+  font-size: 12px;
+  color: #888;
+  margin-top: 2px;
+}
+
+/* Status Badge */
+.status-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 50px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.status-badge.pending {
+  background-color: #fff8e1;
+  color: #f39c12;
+}
+
+.status-badge.approved {
+  background-color: #e6f7f0;
+  color: #1eb980;
+}
+
+.status-badge.rejected {
+  background-color: #f8eae9;
+  color: #e74c3c;
+}
+
+/* Action Buttons */
+.actions-cell {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-approve, 
+.btn-reject {
+  padding: 6px 14px;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s;
+}
+
+.btn-approve {
+  background-color: #1eb980;
+  color: white;
+}
+
+.btn-approve:hover {
+  background-color: #159a69;
+}
+
+.btn-reject {
+  background-color: #fff;
+  color: #e74c3c;
+  border: 1px solid #e74c3c;
+}
+
+.btn-reject:hover {
+  background-color: #fef0ef;
+}
+
+/* Assign Driver Section */
+.assign-driver-section {
+  width: 49%;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  padding: 20px;
+}
+
+/* Form Styling */
+.assign-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-group label {
+  font-size: 14px;
+  color: #666666;
+  font-weight: 500;
+}
+
+/* Custom Select Styling */
+.custom-select {
+  position: relative;
+}
+
+.custom-select select {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid #e0e0e0;
+  border-radius: 5px;
+  background-color: white;
+  font-size: 14px;
+  appearance: none;
+  color: #333;
+}
+
+.custom-select select:focus {
+  outline: none;
+  border-color: #3498db;
+  box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.1);
+}
+
+.select-arrow {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #999;
+  pointer-events: none;
+}
+
+/* Assign Button */
+.btn-assign {
+  grid-column: span 2;
+  background-color: #3498db;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 12px;
+  font-weight: 500;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.btn-assign:hover {
+  background-color: #2980b9;
+}
+
+.btn-assign:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .assign-form {
+    grid-template-columns: 1fr;
+  }
+  
+  .btn-assign {
+    grid-column: span 1;
+  }
+  
+  .app-table {
+    min-width: 800px;
+  }
+  
+  .app-table-container {
+    overflow-x: auto;
+  }
+}

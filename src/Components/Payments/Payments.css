@@ -1,0 +1,383 @@
+/* Payments.css */
+.payments-container {
+  padding: 20px;
+  font-family: 'Roboto', sans-serif;
+}
+
+.payments-header {
+  margin-bottom: 24px;
+}
+
+.payments-header h1 {
+  margin: 0 0 16px 0;
+  font-size: 24px;
+  font-weight: 600;
+  color: #333;
+}
+
+.tabs {
+  display: flex;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.tab {
+  padding: 12px 24px;
+  font-size: 15px;
+  font-weight: 500;
+  color: #666;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.tab:hover {
+  color: #4ecdc4;
+}
+
+.tab.active {
+  color: #4ecdc4;
+  border-bottom: 2px solid #4ecdc4;
+}
+
+.header-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+}
+
+.search-box {
+  position: relative;
+  flex: 1;
+  max-width: 350px;
+}
+
+.search-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #666;
+}
+
+.search-box input {
+  width: 100%;
+  padding: 10px 10px 10px 40px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.filter-dropdown {
+  position: relative;
+}
+
+.filter-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background-color: #f5f5f5;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.filter-options {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  z-index: 10;
+  width: 150px;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  display: none;
+}
+
+.filter-dropdown:hover .filter-options {
+  display: block;
+}
+
+.filter-options button {
+  display: block;
+  width: 100%;
+  padding: 8px 16px;
+  text-align: left;
+  background: none;
+  border: none;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.filter-options button:hover,
+.filter-options button.active {
+  background-color: #f5f5f5;
+}
+
+.add-payment-btn {
+  background-color: #4ecdc4;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 10px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.add-payment-btn:hover {
+  background-color: #3dbdb4;
+}
+
+.year-selector {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+}
+
+.year-selector select {
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.payments-table-container {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.payments-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.payments-table th {
+  background-color: #f8f9fa;
+  padding: 12px 16px;
+  text-align: left;
+  font-weight: 600;
+  color: #666;
+  font-size: 14px;
+  border-bottom: 1px solid #ddd;
+}
+
+.payments-table td {
+  padding: 16px;
+  border-bottom: 1px solid #eee;
+  color: #333;
+  font-size: 14px;
+}
+
+.payments-table tr:hover {
+  background-color: #f9f9f9;
+}
+
+.id-cell {
+  font-family: monospace;
+  color: #666;
+}
+
+.amount {
+  font-weight: 500;
+}
+
+.highlight {
+  color: #2196f3;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 16px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.status-badge.completed,
+.status-badge.paid {
+  background-color: #e1f5e0;
+  color: #43a047;
+}
+
+.status-badge.pending,
+.status-badge.unpaid {
+  background-color: #fff3e0;
+  color: #ef6c00;
+}
+
+.actions-cell {
+  white-space: nowrap;
+  display: flex;
+  gap: 8px;
+}
+
+.view-btn,
+.mark-paid-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.view-btn {
+  color: #2196f3;
+  background-color: #e3f2fd;
+}
+
+.view-btn:hover {
+  background-color: #bbdefb;
+}
+
+.mark-paid-btn {
+  color: #43a047;
+  background-color: #e8f5e9;
+}
+
+.mark-paid-btn:hover {
+  background-color: #c8e6c9;
+}
+
+/* Modal styles */
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background-color: white;
+  border-radius: 8px;
+  padding: 24px;
+  width: 500px;
+  max-width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.modal-content h2 {
+  margin-top: 0;
+  margin-bottom: 24px;
+  font-size: 20px;
+  color: #333;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 12px;
+}
+
+.payment-details,
+.hire-details {
+  margin-bottom: 24px;
+}
+
+.detail-row {
+  display: flex;
+  margin-bottom: 12px;
+}
+
+.detail-row .label {
+  flex: 0 0 150px;
+  font-weight: 500;
+  color: #666;
+}
+
+.detail-row .value {
+  flex: 1;
+}
+
+.detail-row .value.status {
+  font-weight: 500;
+}
+
+.detail-row .value.status.paid {
+  color: #43a047;
+}
+
+.detail-row .value.status.unpaid {
+  color: #ef6c00;
+}
+
+.hire-link {
+  margin-bottom: 24px;
+}
+
+.hire-link button {
+  background: none;
+  border: none;
+  color: #2196f3;
+  cursor: pointer;
+  padding: 0;
+  font-size: 14px;
+  text-decoration: underline;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.modal-actions button {
+  padding: 10px 16px;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.modal-actions button:not(.primary-btn) {
+  background-color: #f5f5f5;
+  border: 1px solid #ddd;
+  color: #333;
+}
+
+.modal-actions .primary-btn {
+  background-color: #4ecdc4;
+  border: none;
+  color: white;
+}
+
+.modal-actions button:hover:not(.primary-btn) {
+  background-color: #e5e5e5;
+}
+
+.modal-actions .primary-btn:hover {
+  background-color: #3dbdb4;
+}
+
+.loading,
+.error-message,
+.no-results {
+  padding: 20px;
+  text-align: center;
+  color: #666;
+}
+
+.error-message {
+  color: #e53935;
+}

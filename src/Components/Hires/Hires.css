@@ -1,0 +1,523 @@
+/* Hires.css */
+.hires-container {
+  padding: 20px;
+  font-family: 'Roboto', sans-serif;
+}
+
+/* Header styles */
+.hires-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.hires-header h1 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 600;
+  color: #333;
+}
+
+.header-actions {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+.search-box {
+  position: relative;
+  width: 300px;
+}
+
+.search-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #666;
+}
+
+.search-box input {
+  width: 100%;
+  padding: 10px 10px 10px 40px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.filter-dropdown {
+  position: relative;
+}
+
+.filter-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background-color: #f5f5f5;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.filter-options {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  z-index: 10;
+  width: 150px;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  display: none;
+}
+
+.filter-dropdown:hover .filter-options {
+  display: block;
+}
+
+.filter-options button {
+  display: block;
+  width: 100%;
+  padding: 8px 16px;
+  text-align: left;
+  background: none;
+  border: none;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.filter-options button:hover,
+.filter-options button.active {
+  background-color: #f5f5f5;
+}
+
+.new-hire-btn {
+  background-color: #4ecdc4;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 10px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.new-hire-btn:hover {
+  background-color: #3dbdb4;
+}
+
+/* Table styles */
+.hires-table-container {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.hires-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.hires-table th {
+  background-color: #f8f9fa;
+  padding: 12px 16px;
+  text-align: left;
+  font-weight: 600;
+  color: #666;
+  font-size: 14px;
+  border-bottom: 1px solid #ddd;
+}
+
+.hires-table td {
+  padding: 16px;
+  border-bottom: 1px solid #eee;
+  color: #333;
+  font-size: 14px;
+}
+
+.hires-table tr:hover {
+  background-color: #f9f9f9;
+}
+
+/* Customer/Driver cell styles */
+.customer-cell,
+.driver-cell {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.avatar-placeholder {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #e0e0e0;
+  color: #757575;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 18px;
+}
+
+.customer-info,
+.driver-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.name {
+  font-weight: 500;
+  color: #333;
+}
+
+.phone,
+.vehicle,
+.time {
+  font-size: 12px;
+  color: #666;
+  margin-top: 2px;
+}
+
+.unassigned {
+  color: #999;
+  font-style: italic;
+}
+
+.location {
+  max-width: 200px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.datetime {
+  white-space: nowrap;
+}
+
+.amount {
+  font-weight: 500;
+}
+
+/* Status badge styles */
+.status-badge {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 16px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.status-badge.completed {
+  background-color: #e1f5e0;
+  color: #43a047;
+}
+
+.status-badge.pending {
+  background-color: #fff3e0;
+  color: #ef6c00;
+}
+
+.status-badge.accepted {
+  background-color: #e3f2fd;
+  color: #1976d2;
+}
+
+.status-badge.cancelled {
+  background-color: #ffebee;
+  color: #e53935;
+}
+
+/* Action button styles */
+.view-details-btn {
+  background-color: #e3f2fd;
+  color: #2196f3;
+  border: none;
+  border-radius: 4px;
+  padding: 6px 12px;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.view-details-btn:hover {
+  background-color: #bbdefb;
+}
+
+/* Modal styles */
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background-color: white;
+  border-radius: 8px;
+  padding: 24px;
+  width: 600px;
+  max-width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.modal-content h2 {
+  margin-top: 0;
+  margin-bottom: 24px;
+  font-size: 20px;
+  color: #333;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 12px;
+}
+
+/* Detail section styles */
+.detail-section {
+  margin-bottom: 24px;
+}
+
+.detail-section h3 {
+  font-size: 16px;
+  margin-bottom: 12px;
+  color: #555;
+}
+
+.detail-row {
+  display: flex;
+  margin-bottom: 8px;
+}
+
+.detail-row .label {
+  flex: 0 0 120px;
+  font-weight: 500;
+  color: #666;
+}
+
+.detail-row .value {
+  flex: 1;
+}
+
+.detail-row .value.status {
+  font-weight: 500;
+}
+
+.detail-row .value.status.completed {
+  color: #43a047;
+}
+
+.detail-row .value.status.pending {
+  color: #ef6c00;
+}
+
+.detail-row .value.status.accepted {
+  color: #1976d2;
+}
+
+.detail-row .value.status.cancelled {
+  color: #e53935;
+}
+
+.description {
+  background-color: #f9f9f9;
+  padding: 12px;
+  border-radius: 4px;
+  font-size: 14px;
+  color: #555;
+}
+
+/* Driver selection styles */
+.driver-selection {
+  display: flex;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.driver-selection select {
+  flex: 1;
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.assign-btn {
+  background-color: #4ecdc4;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 16px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.assign-btn:hover {
+  background-color: #3dbdb4;
+}
+
+/* Modal action buttons */
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 24px;
+  border-top: 1px solid #eee;
+  padding-top: 20px;
+}
+
+.close-btn,
+.cancel-btn,
+.complete-btn {
+  padding: 10px 16px;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.close-btn {
+  background-color: #f5f5f5;
+  border: 1px solid #ddd;
+  color: #333;
+}
+
+.close-btn:hover {
+  background-color: #e5e5e5;
+}
+
+.cancel-btn {
+  background-color: #ffebee;
+  border: 1px solid #ffcdd2;
+  color: #e53935;
+}
+
+.cancel-btn:hover {
+  background-color: #ffcdd2;
+}
+
+.complete-btn {
+  background-color: #e8f5e9;
+  border: 1px solid #c8e6c9;
+  color: #43a047;
+}
+
+.complete-btn:hover {
+  background-color: #c8e6c9;
+}
+
+/* Form styles for new hire modal */
+.form-section {
+  margin-bottom: 24px;
+}
+
+.form-section h3 {
+  font-size: 16px;
+  margin-bottom: 16px;
+  color: #555;
+}
+
+.form-group {
+  margin-bottom: 16px;
+}
+
+.form-row {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.form-group.half {
+  flex: 1;
+  margin-bottom: 0;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #555;
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.form-group.checkbox {
+  display: flex;
+  align-items: center;
+}
+
+.form-group.checkbox label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 0;
+  cursor: pointer;
+}
+
+.form-group.checkbox input {
+  width: auto;
+}
+
+.submit-btn {
+  background-color: #4ecdc4;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 10px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.submit-btn:hover {
+  background-color: #3dbdb4;
+}
+
+/* Loading and error states */
+.loading,
+.error-message,
+.no-results {
+  padding: 20px;
+  text-align: center;
+  color: #666;
+}
+
+.error-message {
+  color: #e53935;
+}

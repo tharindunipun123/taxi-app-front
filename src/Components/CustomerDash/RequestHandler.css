@@ -1,0 +1,840 @@
+/* RequestHandler.css */
+
+.request-handler-container {
+  padding: 1.5rem;
+  background-color: #f5f7fa;
+  min-height: 100vh;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.section-title {
+  font-size: 1.8rem;
+  color: #333;
+  margin-bottom: 1.5rem;
+  font-weight: 600;
+}
+
+/* Dashboard Metrics */
+.dashboard-metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.metric-card {
+  display: flex;
+  align-items: center;
+  background-color: #fff;
+  padding: 1.25rem;
+  border-radius: 0.75rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.metric-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+}
+
+.metric-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 3rem;
+  height: 3rem;
+  background-color: #f0f4ff;
+  border-radius: 50%;
+  margin-right: 1rem;
+  color: #4c6ef5;
+  font-size: 1.25rem;
+}
+
+.metric-content {
+  flex: 1;
+}
+
+.metric-title {
+  font-size: 0.9rem;
+  color: #6b7280;
+  margin-bottom: 0.25rem;
+}
+
+.metric-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #333;
+  margin: 0;
+}
+
+.multi-request-icon {
+  color: #ff9800;
+}
+
+/* Section Header */
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.section-header h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #333;
+  margin: 0;
+}
+
+.filter-controls {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.filter-btn {
+  background-color: transparent;
+  border: 1px solid #ddd;
+  border-radius: 0.5rem;
+  padding: 0.4rem 0.75rem;
+  font-size: 0.875rem;
+  color: #666;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.filter-btn:hover {
+  border-color: #aaa;
+  color: #333;
+}
+
+.filter-btn.active {
+  background-color: #4c6ef5;
+  border-color: #4c6ef5;
+  color: white;
+}
+
+/* Hires List */
+.hires-container {
+  background-color: #fff;
+  border-radius: 0.75rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  padding: 1.5rem;
+}
+
+.hires-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1rem;
+}
+
+.hire-card {
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+  background-color: white;
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.hire-card:hover {
+  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.05);
+  transform: translateY(-2px);
+}
+
+.hire-card.multi-request {
+  border-left: 4px solid #ff9800;
+}
+
+.hire-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.customer-info {
+  display: flex;
+  align-items: center;
+}
+
+.customer-avatar, .driver-avatar-small {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 0.75rem;
+  background-color: #f0f4ff;
+}
+
+.avatar-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  background-color: #e5e7eb;
+  color: #6b7280;
+  font-weight: 500;
+  margin-right: 0.75rem;
+}
+
+.customer-info h4 {
+  margin: 0;
+  font-size: 1rem;
+  color: #333;
+}
+
+.user-contact {
+  margin: 0;
+  font-size: 0.8rem;
+  color: #6b7280;
+}
+
+.request-badge {
+  background-color: #f0f4ff;
+  border-radius: 1rem;
+  padding: 0.3rem 0.6rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.request-count {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #4c6ef5;
+}
+
+.request-label {
+  font-size: 0.7rem;
+  color: #6b7280;
+}
+
+/* Hire Details */
+.hire-details {
+  margin-bottom: 1rem;
+}
+
+.detail-row {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.detail-item {
+  display: flex;
+  flex: 1;
+}
+
+.detail-icon {
+  margin-right: 0.5rem;
+  color: #6b7280;
+  margin-top: 0.25rem;
+}
+
+.detail-icon.pickup {
+  color: #4caf50;
+}
+
+.detail-icon.dropoff {
+  color: #f44336;
+}
+
+.detail-label {
+  font-size: 0.75rem;
+  color: #6b7280;
+  margin: 0;
+}
+
+.detail-value {
+  font-size: 0.9rem;
+  color: #333;
+  font-weight: 500;
+  margin: 0;
+}
+
+/* Driver Preview */
+.driver-preview {
+  margin-top: auto;
+  padding-top: 0.75rem;
+  border-top: 1px solid #f0f0f0;
+}
+
+.driver-preview h5 {
+  font-size: 0.9rem;
+  margin: 0 0 0.5rem 0;
+  color: #666;
+}
+
+.driver-avatars {
+  display: flex;
+  align-items: center;
+}
+
+.driver-avatar-container {
+  margin-right: -0.75rem;
+  border: 2px solid white;
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+.driver-avatar-small {
+  width: 2.5rem;
+  height: 2.5rem;
+  object-fit: cover;
+}
+
+.more-drivers {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  background-color: #f0f4ff;
+  color: #4c6ef5;
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin-left: 0.5rem;
+  border: 2px solid white;
+}
+
+.no-drivers {
+  margin-top: auto;
+  padding-top: 0.75rem;
+  border-top: 1px solid #f0f0f0;
+  color: #999;
+  font-style: italic;
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+.hire-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1rem;
+  gap: 0.75rem;
+}
+
+.view-details-btn, .assign-driver-btn {
+  flex: 1;
+  padding: 0.6rem 1rem;
+  border-radius: 0.5rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.view-details-btn {
+  background-color: #f0f4ff;
+  color: #4c6ef5;
+  border: 1px solid #dbe4fe;
+}
+
+.view-details-btn:hover {
+  background-color: #dbe4fe;
+}
+
+.assign-driver-btn {
+  background-color: #4c6ef5;
+  color: white;
+  border: none;
+}
+
+.assign-driver-btn:hover {
+  background-color: #3b5bdb;
+}
+
+.assign-driver-btn:disabled {
+  background-color: #e2e8f0;
+  color: #a0aec0;
+  cursor: not-allowed;
+}
+
+/* Modal Styles */
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background-color: white;
+  border-radius: 0.75rem;
+  width: 90%;
+  max-width: 900px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.25rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.modal-header h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  color: #333;
+}
+
+.close-modal-btn {
+  background: none;
+  border: none;
+  font-size: 1.75rem;
+  color: #6b7280;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+}
+
+.close-modal-btn:hover {
+  color: #333;
+}
+
+/* Hire Summary in Modal */
+.hire-summary {
+  padding: 1.25rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.hire-summary h3 {
+  margin: 0 0 1rem 0;
+  font-size: 1.15rem;
+  color: #333;
+}
+
+.summary-section {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 0.75rem 1.5rem;
+}
+
+.summary-row {
+  display: flex;
+  margin-bottom: 0.5rem;
+}
+
+.summary-label {
+  font-weight: 500;
+  color: #6b7280;
+  width: 100px;
+  flex-shrink: 0;
+}
+
+.summary-value {
+  color: #333;
+  flex: 1;
+}
+
+.summary-value.description {
+  white-space: pre-line;
+  grid-column: 1 / -1;
+}
+
+/* Driver Selection in Modal */
+.driver-selection {
+  padding: 1.25rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.driver-selection h3 {
+  margin: 0 0 1rem 0;
+  font-size: 1.15rem;
+  color: #333;
+}
+
+.no-drivers-message {
+  text-align: center;
+  padding: 2rem;
+  color: #6b7280;
+  font-style: italic;
+}
+
+.drivers-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.driver-card {
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  padding: 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.driver-card:hover {
+  border-color: #4c6ef5;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+}
+
+.driver-card.selected {
+  border-color: #4c6ef5;
+  box-shadow: 0 5px 15px rgba(76, 110, 245, 0.2);
+}
+
+.driver-card-header {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 0.75rem;
+  position: relative;
+}
+
+.driver-avatar-large {
+  width: 5rem;
+  height: 5rem;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.avatar-placeholder.driver-avatar-large {
+  width: 5rem;
+  height: 5rem;
+  font-size: 1.5rem;
+}
+
+.selected-checkmark {
+  position: absolute;
+  bottom: 0;
+  right: calc(50% - 2.5rem);
+  background-color: #4c6ef5;
+  color: white;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid white;
+}
+
+.driver-info {
+  text-align: center;
+}
+
+.driver-info h4 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1rem;
+  color: #333;
+}
+
+.info-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+  margin-bottom: 0.25rem;
+  font-size: 0.8rem;
+  color: #6b7280;
+}
+
+.info-icon {
+  font-size: 0.75rem;
+}
+
+/* Modal Actions */
+.modal-actions {
+  padding: 1.25rem;
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+}
+
+.cancel-btn, .assign-btn {
+  padding: 0.6rem 1.25rem;
+  border-radius: 0.5rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.cancel-btn {
+  background-color: white;
+  color: #6b7280;
+  border: 1px solid #e5e7eb;
+}
+
+.cancel-btn:hover {
+  background-color: #f9fafb;
+  color: #374151;
+}
+
+.assign-btn {
+  background-color: #4c6ef5;
+  color: white;
+  border: none;
+}
+
+.assign-btn:hover {
+  background-color: #3b5bdb;
+}
+
+.assign-btn:disabled {
+  background-color: #e2e8f0;
+  color: #a0aec0;
+  cursor: not-allowed;
+}
+
+/* Loading and Error States */
+.loading, .error-message {
+  text-align: center;
+  padding: 3rem;
+  color: #6b7280;
+}
+
+.error-message {
+  color: #e53e3e;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .hires-list {
+    grid-template-columns: 1fr;
+  }
+  
+  .summary-section {
+    grid-template-columns: 1fr;
+  }
+  
+  .drivers-grid {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  }
+  
+  .detail-row {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .modal-content {
+    width: 95%;
+  }
+}
+
+
+
+
+
+.driver-search-container {
+  position: relative;
+  margin-bottom: 16px;
+  width: 100%;
+}
+
+.driver-search-input {
+  width: 100%;
+  padding: 10px 10px 10px 40px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.driver-search-container .search-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #666;
+}
+
+.drivers-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  max-height: 350px;
+  overflow-y: auto;
+}
+
+.driver-card {
+  background-color: #f8f9fa;
+  border-radius: 6px;
+  padding: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 1px solid #eaeaea;
+}
+
+.driver-card:hover {
+  background-color: #f0f0f0;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+}
+
+.driver-card.selected {
+  background-color: #e0f7fa;
+  border-color: #00bcd4;
+}
+
+.driver-avatar-small {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 8px;
+}
+
+.avatar-placeholder.driver-avatar-small {
+  width: 40px;
+  height: 40px;
+  background-color: #4ecdc4;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 16px;
+  margin-bottom: 8px;
+}
+
+.driver-card-header {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 8px;
+}
+
+.selected-checkmark {
+  position: absolute;
+  right: -5px;
+  top: -5px;
+  background-color: #4caf50;
+  color: white;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+}
+
+.driver-info {
+  text-align: center;
+}
+
+.driver-info h4 {
+  margin: 0 0 5px 0;
+  font-size: 14px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.driver-id {
+  font-size: 12px;
+  margin-bottom: 5px;
+  color: #666;
+}
+
+.driver-id .highlight {
+  color: #03a9f4;
+  font-weight: 600;
+}
+
+.info-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  color: #555;
+  margin-top: 4px;
+}
+
+.info-item .info-icon {
+  margin-right: 4px;
+  font-size: 10px;
+}
+
+@media (max-width: 1200px) {
+  .drivers-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .drivers-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .drivers-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+
+
+
+
+
+/* Update these CSS properties in your RequestHandler.css file */
+
+/* Increase the modal width */
+.modal-content {
+  background-color: white;
+  border-radius: 0.75rem;
+  width: 95%;
+  max-width: 1200px; /* Increased from 900px to 1200px */
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+  display: flex;
+  flex-direction: column;
+}
+
+/* Make the drivers container larger */
+.drivers-container {
+  max-height: 450px; /* Increased height */
+  overflow-y: auto;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  padding: 16px;
+  background-color: #f9f9f9;
+}
+
+/* Adjust driver card size for better fit in larger modal */
+.driver-card {
+  flex: 1;
+  min-width: 0;
+  max-width: calc(25% - 24px); /* Ensure cards don't get too wide */
+  background-color: white;
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 1px solid #eaeaea;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
