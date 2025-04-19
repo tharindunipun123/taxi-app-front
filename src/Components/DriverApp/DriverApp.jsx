@@ -43,6 +43,7 @@ import { FaChevronDown, FaSearch, FaPlus, FaEdit, FaTrash, FaIdCard, FaFileInvoi
 
 // API base URL
 const API_URL = 'http://145.223.21.62:8085/api/collections/driver/records';
+const VEHICLES_API = `http://145.223.21.62:8085/api/collections/vehicle/records`;
 
 const DriverApp = () => {
   // State for driver data
@@ -134,6 +135,29 @@ const fetchDrivers = async () => {
   }
 };
 
+
+// 2. Add a new state for vehicles in the DriverApp component
+const [driverVehicles, setDriverVehicles] = useState({});
+
+// 3. Create a function to fetch vehicles for a specific driver
+const fetchDriverVehicles = async (driverId) => {
+  try {
+    // Use the filter parameter to get vehicles for this specific driver
+    const response = await fetch(`${VEHICLES_API}?filter=(driver_id="${driverId}")`);
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+    
+    const data = await response.json();
+    return data.items;
+  } catch (err) {
+    console.error(`Error fetching vehicles for driver ${driverId}:`, err);
+    return [];
+  }
+};
+
+
   // Load drivers on component mount
   useEffect(() => {
     fetchDrivers();
@@ -222,10 +246,25 @@ const fetchDrivers = async () => {
     setShowModal(true);
   };
 
-  // View driver details
-  const viewDriverDetails = (driver) => {
+  const viewDriverDetails = async (driver) => {
     setSelectedDriver(driver);
     setShowDetailModal(true);
+    
+    // Fetch vehicles for this driver
+    const vehicles = await fetchDriverVehicles(driver.id);
+    
+    // Update the driverVehicles state with the fetched data
+    setDriverVehicles(prev => ({
+      ...prev,
+      [driver.id]: vehicles
+    }));
+  };
+
+  const getVehicleImageUrl = (vehicle, imageField) => {
+    if (vehicle && vehicle[imageField]) {
+      return `http://145.223.21.62:8085/api/files/${vehicle.collectionName || 'vehicle'}/${vehicle.id}/${vehicle[imageField]}`;
+    }
+    return null;
   };
 
   // Create or update driver using Fetch API
@@ -719,270 +758,371 @@ const fetchDrivers = async () => {
   };
 
 
-  // Driver details modal
-  const DriverDetailsModal = () => {
-    if (!selectedDriver) return null;
-    
-    return (
-      <div className="modal-backdrop" style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        backgroundColor: 'rgba(0, 0, 0, 0.5)',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        zIndex: 1000
-      }}>
-        <div className="modal-content" style={{
-          backgroundColor: 'white',
-          borderRadius: '8px',
-          width: '90%',
-          maxWidth: '700px',
-          maxHeight: '90vh',
-          overflow: 'auto',
-          boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
-        }}>
-          <div style={{padding: '20px', borderBottom: '1px solid #eee', display: 'flex', alignItems: 'center', justifyContent: 'space-between'}}>
-            <h2 style={{margin: 0}}>Driver Details</h2>
-            <button onClick={() => setShowDetailModal(false)} style={{
-              background: 'none',
-              border: 'none',
-              fontSize: '24px',
-              cursor: 'pointer',
-              color: '#666'
-            }}>&times;</button>
-          </div>
-          
-          <div style={{padding: '20px', display: 'flex', borderBottom: '1px solid #eee'}}>
-            <div style={{width: '120px', height: '120px', flexShrink: 0, marginRight: '20px'}}>
-            {getAvatarSource(driver) ? (
-  <img 
-    src={getAvatarSource(driver)} 
-    alt={driver.name} 
-    style={{
-      width: '100%',
-      height: '100%',
-      objectFit: 'cover',
-      cursor: 'pointer'
-    }}
-    onClick={(e) => {
-      e.stopPropagation();
-      handlePhotoClick(driver, 'profile');
-    }}
-  />
-) : (
-  <div style={{
-    width: '100%',
-    height: '100%',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    color: 'white',
-    fontSize: '24px',
-    fontWeight: 'bold'
-  }}>
-    {driver.name ? driver.name.charAt(0) : '?'}
-  </div>
-)}
+// Driver details modal with vehicle information
+const DriverDetailsModal = () => {
+  // State for tracking the selected vehicle tab (if driver has multiple vehicles)
+  const [activeVehicleIndex, setActiveVehicleIndex] = useState(0);
   
+  // Get the vehicles for the current driver, or empty array if none
+  const currentDriverVehicles = selectedDriver ? (driverVehicles[selectedDriver.id] || []) : [];
+  
+  if (!selectedDriver) return null;
+  
+  return (
+    <div className="modal-backdrop" style={{
+      position: 'fixed',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      backgroundColor: 'rgba(0, 0, 0, 0.5)',
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      zIndex: 1000
+    }}>
+      <div className="modal-content" style={{
+        backgroundColor: 'white',
+        borderRadius: '8px',
+        width: '90%',
+        maxWidth: '800px',
+        maxHeight: '90vh',
+        overflow: 'auto',
+        boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
+      }}>
+        <div style={{padding: '20px', borderBottom: '1px solid #eee', display: 'flex', alignItems: 'center', justifyContent: 'space-between'}}>
+          <h2 style={{margin: 0}}>Driver Details</h2>
+          <button onClick={() => setShowDetailModal(false)} style={{
+            background: 'none',
+            border: 'none',
+            fontSize: '24px',
+            cursor: 'pointer',
+            color: '#666'
+          }}>&times;</button>
+        </div>
+        
+        <div style={{padding: '20px', display: 'flex', borderBottom: '1px solid #eee'}}>
+          <div style={{width: '120px', height: '120px', flexShrink: 0, marginRight: '20px'}}>
+          {getAvatarSource(selectedDriver) ? (
+            <img 
+              src={getAvatarSource(selectedDriver)} 
+              alt={selectedDriver.name} 
+              style={{
+                width: '100%',
+                height: '100%',
+                objectFit: 'cover',
+                cursor: 'pointer'
+              }}
+              onClick={(e) => {
+                e.stopPropagation();
+                handlePhotoClick(selectedDriver, 'profile');
+              }}
+            />
+          ) : (
+            <div style={{
+              width: '100%',
+              height: '100%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: 'white',
+              fontSize: '24px',
+              fontWeight: 'bold',
+              backgroundColor: '#4361ee',
+              borderRadius: '50%'
+            }}>
+              {selectedDriver.name ? selectedDriver.name.charAt(0) : '?'}
+            </div>
+          )}
+          </div>
+          
+          <div>
+            <h3 style={{marginTop: 0, marginBottom: '8px'}}>{selectedDriver.name}</h3>
+            <div style={{display: 'flex', flexWrap: 'wrap', gap: '10px', marginBottom: '8px'}}>
+              <span style={{
+                display: 'inline-block',
+                padding: '2px 8px',
+                borderRadius: '12px',
+                backgroundColor: selectedDriver.isverified ? '#d1fae5' : '#fee2e2',
+                color: selectedDriver.isverified ? '#047857' : '#b91c1c',
+                fontSize: '14px',
+                fontWeight: 'bold'
+              }}>
+                {selectedDriver.isverified ? 'Verified' : 'Not Verified'}
+              </span>
+              
+              <span style={{
+                display: 'inline-block',
+                padding: '2px 8px',
+                borderRadius: '12px',
+                backgroundColor: selectedDriver.isApproved ? '#dbeafe' : '#fef3c7',
+                color: selectedDriver.isApproved ? '#1e40af' : '#92400e',
+                fontSize: '14px',
+                fontWeight: 'bold'
+              }}>
+                {selectedDriver.isApproved ? 'Approved' : 'Not Approved'}
+              </span>
+              
+              <span style={{
+                display: 'inline-block',
+                padding: '2px 8px',
+                borderRadius: '12px',
+                backgroundColor: selectedDriver.anuualfee_paid ? '#d1fae5' : '#fee2e2',
+                color: selectedDriver.anuualfee_paid ? '#047857' : '#b91c1c',
+                fontSize: '14px',
+                fontWeight: 'bold'
+              }}>
+                {selectedDriver.anuualfee_paid ? 'Fee Paid' : 'Fee Not Paid'}
+              </span>
             </div>
             
-            <div>
-              <h3 style={{marginTop: 0, marginBottom: '8px'}}>{selectedDriver.name}</h3>
-              <div style={{display: 'flex', gap: '10px', marginBottom: '8px'}}>
-                <span style={{
-                  display: 'inline-block',
-                  padding: '2px 8px',
-                  borderRadius: '12px',
-                  backgroundColor: selectedDriver.isverified ? '#d1fae5' : '#fee2e2',
-                  color: selectedDriver.isverified ? '#047857' : '#b91c1c',
-                  fontSize: '14px',
-                  fontWeight: 'bold'
-                }}>
-                  {selectedDriver.isverified ? 'Verified' : 'Not Verified'}
-                </span>
-                
-                <span style={{
-                  display: 'inline-block',
-                  padding: '2px 8px',
-                  borderRadius: '12px',
-                  backgroundColor: selectedDriver.isApproved ? '#dbeafe' : '#fef3c7',
-                  color: selectedDriver.isApproved ? '#1e40af' : '#92400e',
-                  fontSize: '14px',
-                  fontWeight: 'bold'
-                }}>
-                  {selectedDriver.isApproved ? 'Approved' : 'Not Approved'}
-                </span>
-                
-                <span style={{
-                  display: 'inline-block',
-                  padding: '2px 8px',
-                  borderRadius: '12px',
-                  backgroundColor: selectedDriver.anuualfee_paid ? '#d1fae5' : '#fee2e2',
-                  color: selectedDriver.anuualfee_paid ? '#047857' : '#b91c1c',
-                  fontSize: '14px',
-                  fontWeight: 'bold'
-                }}>
-                  {selectedDriver.anuualfee_paid ? 'Fee Paid' : 'Fee Not Paid'}
-                </span>
-              </div>
-              
-              <div style={{color: '#666'}}>ID: {selectedDriver.id}</div>
-              <div style={{color: '#666', fontSize: '14px', marginTop: '5px'}}>
-                Added: {formatDate(selectedDriver.created)}
-              </div>
+            <div style={{color: '#666'}}>ID: {selectedDriver.id}</div>
+            <div style={{color: '#666', fontSize: '14px', marginTop: '5px'}}>
+              Added: {formatDate(selectedDriver.created)}
+            </div>
+          </div>
+        </div>
+        
+        <div style={{padding: '20px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px'}}>
+          <div className="info-block">
+            <h4 style={{marginTop: 0, borderBottom: '1px solid #eee', paddingBottom: '8px'}}>Contact Information</h4>
+            
+            <div style={{marginBottom: '10px'}}>
+              <div style={{color: '#666', fontSize: '14px'}}>Email</div>
+              <div>{selectedDriver.email || 'Not provided'}</div>
+            </div>
+            
+            <div style={{marginBottom: '10px'}}>
+              <div style={{color: '#666', fontSize: '14px'}}>Phone Number</div>
+              <div>{selectedDriver.phonenumber || 'Not provided'}</div>
+            </div>
+            
+            <div style={{marginBottom: '10px'}}>
+              <div style={{color: '#666', fontSize: '14px'}}>Address</div>
+              <div>{selectedDriver.address || 'Not provided'}</div>
+            </div>
+            
+            <div style={{marginBottom: '10px'}}>
+              <div style={{color: '#666', fontSize: '14px'}}>Birth Date</div>
+              <div>{formatDate(selectedDriver.bday) || 'Not provided'}</div>
+            </div>
+            
+            <div style={{marginBottom: '10px'}}>
+              <div style={{color: '#666', fontSize: '14px'}}>OneSignal Player ID</div>
+              <div style={{wordBreak: 'break-all'}}>{selectedDriver.onesignal_player_id || 'Not provided'}</div>
             </div>
           </div>
           
-          <div style={{padding: '20px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px'}}>
-            <div className="info-block">
-              <h4 style={{marginTop: 0, borderBottom: '1px solid #eee', paddingBottom: '8px'}}>Contact Information</h4>
-              
-              <div style={{marginBottom: '10px'}}>
-                <div style={{color: '#666', fontSize: '14px'}}>Email</div>
-                <div>{selectedDriver.email || 'Not provided'}</div>
-              </div>
-              
-              <div style={{marginBottom: '10px'}}>
-                <div style={{color: '#666', fontSize: '14px'}}>Phone Number</div>
-                <div>{selectedDriver.phonenumber || 'Not provided'}</div>
-              </div>
-              
-              <div style={{marginBottom: '10px'}}>
-                <div style={{color: '#666', fontSize: '14px'}}>Address</div>
-                <div>{selectedDriver.address || 'Not provided'}</div>
-              </div>
-              
-              <div style={{marginBottom: '10px'}}>
-                <div style={{color: '#666', fontSize: '14px'}}>Birth Date</div>
-                <div>{formatDate(selectedDriver.bday) || 'Not provided'}</div>
-              </div>
-              
-              <div style={{marginBottom: '10px'}}>
-                <div style={{color: '#666', fontSize: '14px'}}>OneSignal Player ID</div>
-                <div style={{wordBreak: 'break-all'}}>{selectedDriver.onesignal_player_id || 'Not provided'}</div>
-              </div>
+          <div className="info-block">
+            <h4 style={{marginTop: 0, borderBottom: '1px solid #eee', paddingBottom: '8px'}}>Driver Details</h4>
+            
+            <div style={{marginBottom: '10px'}}>
+              <div style={{color: '#666', fontSize: '14px'}}>License Number</div>
+              <div>{selectedDriver.license_no || 'Not provided'}</div>
             </div>
             
-            <div className="info-block">
-              <h4 style={{marginTop: 0, borderBottom: '1px solid #eee', paddingBottom: '8px'}}>Driver Details</h4>
-              
-              <div style={{marginBottom: '10px'}}>
-                <div style={{color: '#666', fontSize: '14px'}}>License Number</div>
-                <div>{selectedDriver.license_no || 'Not provided'}</div>
+            <div style={{marginBottom: '10px'}}>
+              <div style={{color: '#666', fontSize: '14px'}}>Last Updated</div>
+              <div>{formatDate(selectedDriver.updated) || 'Not available'}</div>
+            </div>
+            
+            <div style={{marginBottom: '10px'}}>
+              <div style={{color: '#666', fontSize: '14px'}}>Payment Slip</div>
+              <div>
+              {getPaymentSlipSource(selectedDriver) ? (
+                <a 
+                  href="#"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handlePhotoClick(selectedDriver, 'payment');
+                  }}
+                  style={{
+                    display: 'inline-block',
+                    padding: '5px 10px',
+                    backgroundColor: '#f3f4f6',
+                    borderRadius: '4px',
+                    textDecoration: 'none',
+                    color: '#1f2937',
+                    fontSize: '14px'
+                  }}
+                >
+                  <FaFileInvoiceDollar style={{marginRight: '5px'}} />
+                  View Payment Slip
+                </a>
+              ) : (
+                'No payment slip uploaded'
+              )}
               </div>
-              
-              <div style={{marginBottom: '10px'}}>
-                <div style={{color: '#666', fontSize: '14px'}}>Last Updated</div>
-                <div>{formatDate(selectedDriver.updated) || 'Not available'}</div>
+            </div>
+          </div>
+        </div>
+        
+        {/* Vehicle Information Section */}
+        {currentDriverVehicles && currentDriverVehicles.length > 0 ? (
+          <div style={{padding: '20px', borderTop: '1px solid #eee'}}>
+            <h4 style={{marginTop: 0, marginBottom: '20px', borderBottom: '1px solid #eee', paddingBottom: '8px'}}>Vehicle Information</h4>
+            
+            {/* Vehicle Tabs if multiple vehicles */}
+            {currentDriverVehicles.length > 1 && (
+              <div style={{
+                display: 'flex',
+                borderBottom: '1px solid #e5e7eb',
+                marginBottom: '20px'
+              }}>
+                {currentDriverVehicles.map((vehicle, index) => (
+                  <button
+                    key={vehicle.id}
+                    onClick={() => setActiveVehicleIndex(index)}
+                    style={{
+                      padding: '10px 16px',
+                      border: 'none',
+                      background: 'none',
+                      borderBottom: index === activeVehicleIndex ? '2px solid #4361ee' : '2px solid transparent',
+                      color: index === activeVehicleIndex ? '#1e293b' : '#64748b',
+                      fontWeight: index === activeVehicleIndex ? '600' : '500',
+                      cursor: 'pointer',
+                      fontSize: '14px',
+                      transition: 'all 0.2s'
+                    }}
+                  >
+                    {vehicle.vehicle_type || `Vehicle ${index + 1}`}
+                  </button>
+                ))}
               </div>
-              
-              <div style={{marginBottom: '10px'}}>
-                <div style={{color: '#666', fontSize: '14px'}}>Payment Slip</div>
+            )}
+            
+            {/* Active Vehicle Details */}
+            {currentDriverVehicles[activeVehicleIndex] && (
+              <div style={{
+                backgroundColor: '#f8fafc',
+                borderRadius: '8px',
+                padding: '20px',
+                marginBottom: '20px'
+              }}>
+                <div style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                  gap: '20px',
+                  marginBottom: '20px'
+                }}>
+                  <div>
+                    <div style={{color: '#64748b', fontSize: '14px', marginBottom: '4px'}}>Vehicle Type</div>
+                    <div style={{fontWeight: '500'}}>{currentDriverVehicles[activeVehicleIndex].vehicle_type || 'N/A'}</div>
+                  </div>
+                  
+                  <div>
+                    <div style={{color: '#64748b', fontSize: '14px', marginBottom: '4px'}}>License Plate</div>
+                    <div style={{fontWeight: '500'}}>{currentDriverVehicles[activeVehicleIndex].license_plate || 'N/A'}</div>
+                  </div>
+                  
+                  <div>
+                    <div style={{color: '#64748b', fontSize: '14px', marginBottom: '4px'}}>Vehicle Number</div>
+                    <div style={{fontWeight: '500'}}>{currentDriverVehicles[activeVehicleIndex].vehicle_number || 'N/A'}</div>
+                  </div>
+                </div>
+                
+                {currentDriverVehicles[activeVehicleIndex].vehicle_details && (
+                  <div style={{marginBottom: '20px'}}>
+                    <div style={{color: '#64748b', fontSize: '14px', marginBottom: '4px'}}>Vehicle Details</div>
+                    <div style={{
+                      backgroundColor: '#fff',
+                      padding: '12px 16px',
+                      borderRadius: '6px',
+                      border: '1px solid #e5e7eb',
+                      fontSize: '14px',
+                      lineHeight: '1.5'
+                    }}>
+                      {currentDriverVehicles[activeVehicleIndex].vehicle_details}
+                    </div>
+                  </div>
+                )}
+                
+                {/* Vehicle Images */}
                 <div>
-                {getPaymentSlipSource(selectedDriver) ? (
-  <a 
-    href="#"
-    onClick={(e) => {
-      e.preventDefault();
-      handlePhotoClick(selectedDriver, 'payment');
-    }}
-    style={{
-      display: 'inline-block',
-      padding: '5px 10px',
-      backgroundColor: '#f3f4f6',
-      borderRadius: '4px',
-      textDecoration: 'none',
-      color: '#1f2937',
-      fontSize: '14px'
-    }}
-  >
-    <FaFileInvoiceDollar style={{marginRight: '5px'}} />
-    View Payment Slip
-  </a>
-) : (
-  'No payment slip uploaded'
-)}
+                  <div style={{color: '#64748b', fontSize: '14px', marginBottom: '12px'}}>Vehicle Images</div>
+                  <div style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))',
+                    gap: '16px'
+                  }}>
+                    {['image1', 'image2', 'image3', 'image4'].map((imageField, index) => (
+                      currentDriverVehicles[activeVehicleIndex][imageField] ? (
+                        <div key={index} style={{
+                          borderRadius: '8px',
+                          overflow: 'hidden',
+                          boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
+                          aspectRatio: '1',
+                          cursor: 'pointer'
+                        }} onClick={(e) => {
+                          e.stopPropagation();
+                          // Assuming you'll extend handlePhotoClick to handle vehicle images
+                          handlePhotoClick(currentDriverVehicles[activeVehicleIndex], `vehicle_${index + 1}`);
+                        }}>
+                          <img 
+                            src={`http://145.223.21.62:8085/api/files/vehicle/${currentDriverVehicles[activeVehicleIndex].id}/${currentDriverVehicles[activeVehicleIndex][imageField]}`}
+                            alt={`Vehicle image ${index + 1}`}
+                            style={{
+                              width: '100%',
+                              height: '100%',
+                              objectFit: 'cover'
+                            }}
+                            onError={(e) => {
+                              e.target.src = 'https://via.placeholder.com/150x150?text=No+Image';
+                            }}
+                          />
+                        </div>
+                      ) : null
+                    ))}
+                  </div>
                 </div>
               </div>
+            )}
+          </div>
+        ) : (
+          <div style={{padding: '20px', borderTop: '1px solid #eee'}}>
+            <h4 style={{marginTop: 0, marginBottom: '10px', borderBottom: '1px solid #eee', paddingBottom: '8px'}}>Vehicle Information</h4>
+            <div style={{
+              padding: '30px',
+              backgroundColor: '#f8fafc',
+              borderRadius: '8px',
+              textAlign: 'center',
+              color: '#64748b'
+            }}>
+              No vehicles registered for this driver
             </div>
           </div>
+        )}
+        
+        {/* Action Buttons */}
+        <div style={{padding: '20px', borderTop: '1px solid #eee', display: 'flex', justifyContent: 'flex-end', gap: '10px'}}>
+          <button 
+            onClick={() => openModal(selectedDriver)}
+            style={{
+              padding: '8px 16px',
+              borderRadius: '4px',
+              border: 'none',
+              backgroundColor: '#4361ee',
+              color: 'white',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '5px'
+            }}
+          >
+            <FaEdit /> Edit
+          </button>
           
-          <div style={{padding: '20px', borderTop: '1px solid #eee', display: 'flex', justifyContent: 'flex-end', gap: '10px'}}>
-            <button 
-              onClick={() => openModal(selectedDriver)}
-              style={{
-                padding: '8px 16px',
-                borderRadius: '4px',
-                border: 'none',
-                backgroundColor: '#4361ee',
-                color: 'white',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '5px'
-              }}
-            >
-              <FaEdit /> Edit
-            </button>
-            
-            {!selectedDriver.isverified && (
-              <button 
-                onClick={() => {
-                  handleApprove(selectedDriver.id);
-                  setShowDetailModal(false);
-                }}
-                style={{
-                  padding: '8px 16px',
-                  borderRadius: '4px',
-                  border: 'none',
-                  backgroundColor: '#10b981',
-                  color: 'white',
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '5px'
-                }}
-              >
-                <FaCheck /> Approve
-              </button>
-            )}
-            
-            {selectedDriver.isverified && (
-              <button 
-                onClick={() => {
-                  handleReject(selectedDriver.id);
-                  setShowDetailModal(false);
-                }}
-                style={{
-                  padding: '8px 16px',
-                  borderRadius: '4px',
-                  border: 'none',
-                  backgroundColor: '#ef4444',
-                  color: 'white',
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '5px'
-                }}
-              >
-                <FaTimes /> Revoke
-              </button>
-            )}
-            
+          {!selectedDriver.isverified && (
             <button 
               onClick={() => {
-                handleUpdateFeeStatus(selectedDriver.id, !selectedDriver.anuualfee_paid);
+                handleApprove(selectedDriver.id);
                 setShowDetailModal(false);
               }}
               style={{
                 padding: '8px 16px',
                 borderRadius: '4px',
                 border: 'none',
-                backgroundColor: selectedDriver.anuualfee_paid ? '#f59e0b' : '#10b981',
+                backgroundColor: '#10b981',
                 color: 'white',
                 cursor: 'pointer',
                 display: 'flex',
@@ -990,21 +1130,64 @@ const fetchDrivers = async () => {
                 gap: '5px'
               }}
             >
-              {selectedDriver.anuualfee_paid ? (
-                <>
-                  <FaTimes /> Mark Fee Unpaid
-                </>
-              ) : (
-                <>
-                  <FaCheck /> Mark Fee Paid
-                </>
-              )}
+              <FaCheck /> Approve
             </button>
-          </div>
+          )}
+          
+          {selectedDriver.isverified && (
+            <button 
+              onClick={() => {
+                handleReject(selectedDriver.id);
+                setShowDetailModal(false);
+              }}
+              style={{
+                padding: '8px 16px',
+                borderRadius: '4px',
+                border: 'none',
+                backgroundColor: '#ef4444',
+                color: 'white',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '5px'
+              }}
+            >
+              <FaTimes /> Revoke
+            </button>
+          )}
+          
+          <button 
+            onClick={() => {
+              handleUpdateFeeStatus(selectedDriver.id, !selectedDriver.anuualfee_paid);
+              setShowDetailModal(false);
+            }}
+            style={{
+              padding: '8px 16px',
+              borderRadius: '4px',
+              border: 'none',
+              backgroundColor: selectedDriver.anuualfee_paid ? '#f59e0b' : '#10b981',
+              color: 'white',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '5px'
+            }}
+          >
+            {selectedDriver.anuualfee_paid ? (
+              <>
+                <FaTimes /> Mark Fee Unpaid
+              </>
+            ) : (
+              <>
+                <FaCheck /> Mark Fee Paid
+              </>
+            )}
+          </button>
         </div>
       </div>
-    );
-  };
+    </div>
+  );
+};
 
   return (
     <div className="driver-app-container" style={{padding: '20px', backgroundColor: '#f9fafb'}}>
