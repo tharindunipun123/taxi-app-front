@@ -7,7 +7,7 @@ import React, { useState, useEffect } from 'react';
 import { 
   FaUser, FaCar, FaUserTie, FaMapMarkerAlt, FaCalendarAlt, 
   FaCheck, FaTimesCircle, FaEllipsisV, FaCircle, FaPhoneAlt,
-  FaSearch // Add this
+  FaSearch ,FaEye// Add this
 } from 'react-icons/fa';
 import './RequestHandler.css';
 
@@ -29,8 +29,12 @@ const RequestHandler = () => {
   const [availableDrivers, setAvailableDrivers] = useState([]);
   const [selectedDriver, setSelectedDriver] = useState(null);
   const [driverRequests, setDriverRequests] = useState({});
+  const [showHiresModal, setShowHiresModal] = useState(false);
+  const [allHires, setAllHires] = useState([]);
+  const [loadingHires, setLoadingHires] = useState(false);
+  const [hiresSearchTerm, setHiresSearchTerm] = useState('');
 
-
+  
   const fetchPendingHires = async () => {
     try {
       // Step 1: Get all driver requests with driver expansion
@@ -216,6 +220,94 @@ const RequestHandler = () => {
       setError('Failed to load pending hire requests.');
     }
   };
+
+  const filteredModalHires = allHires.filter(hire => {
+    if (!hiresSearchTerm.trim()) return true;
+    
+    const searchLower = hiresSearchTerm.toLowerCase();
+    
+    // Search across multiple fields
+    return (
+      // Customer name
+      (hire.expand?.user_id?.full_name && 
+       hire.expand?.user_id?.full_name.toLowerCase().includes(searchLower)) ||
+      // Phone number
+      (hire.primary_phone && 
+       hire.primary_phone.includes(searchLower)) ||
+      // Pickup location
+      (hire.pick_location && 
+       hire.pick_location.toLowerCase().includes(searchLower)) ||
+      // Drop-off location
+      (hire.drop_off_location && 
+       hire.drop_off_location.toLowerCase().includes(searchLower)) ||
+      // Driver name if assigned
+      (hire.driverid && availableDrivers.some(driver => 
+        driver.id === hire.driverid && 
+        driver.name && 
+        driver.name.toLowerCase().includes(searchLower)))
+    );
+  });
+
+  const fetchBusinessAndCustomerHires = async () => {
+    try {
+      setLoadingHires(true);
+      
+      // Initialize variables for pagination
+      let allHires = [];
+      let page = 1;
+      const perPage = 100; // Fetch 100 records per request
+      let hasMoreRecords = true;
+      
+      while (hasMoreRecords) {
+        const hiresResponse = await fetch(`${HIRES_API}?expand=user_id&fields=*,expand.user_id.usertype,expand.user_id.full_name,expand.user_id.phonenumber,expand.user_id.photo&sort=-created1&page=${page}&perPage=${perPage}`);
+        
+        if (!hiresResponse.ok) {
+          throw new Error(`HTTP error! Status: ${hiresResponse.status}`);
+        }
+        
+        const hiresData = await hiresResponse.json();
+        allHires = [...allHires, ...hiresData.items];
+        
+        // Check if we've reached the end
+        if (hiresData.items.length < perPage || page >= hiresData.totalPages) {
+          hasMoreRecords = false;
+        } else {
+          page++;
+        }
+      }
+      
+      // Filter for customer types based on actual data in your database
+      // According to your sample data, use "customer" instead of "business_customer"/"normal_customer"
+      const filteredHires = allHires.filter(hire => {
+        const userType = hire.user_type; // Note: using hire.user_type directly, not from expand
+        return userType === 'customer'; // Only keep records with user_type "customer"
+      });
+      
+      console.log("Filtered customer hires:", filteredHires);
+      
+      // Ensure hires are sorted by created1 in descending order (newest first)
+      filteredHires.sort((a, b) => {
+        if (!a.created1 && !b.created1) return 0;
+        if (!a.created1) return 1;
+        if (!b.created1) return -1;
+        return new Date(b.created1) - new Date(a.created1);
+      });
+      
+      setAllHires(filteredHires);
+      return filteredHires;
+    } catch (err) {
+      console.error('Error fetching customer hires:', err);
+      return [];
+    } finally {
+      setLoadingHires(false);
+    }
+  };
+
+  const handleHiresCardClick = async () => {
+    await fetchBusinessAndCustomerHires();
+    setShowHiresModal(true);
+  };
+  
 
 // // Fetch all pending hires that have driver requests
 // const fetchPendingHires = async () => {
@@ -725,7 +817,18 @@ const filteredDrivers = availableDrivers.filter(driver => {
                 </h2>
               </div>
             </div>
+
+            <div className="metric-card" onClick={handleHiresCardClick} style={{ cursor: 'pointer' }}>
+  <div className="metric-icon">
+    <FaUserTie />
+  </div>
+  <div className="metric-content">
+    <p className="metric-title">Hires</p>
+  </div>
+</div>
           </div>
+
+          
           
           <div className="hires-container">
             <div className="section-header">
@@ -1634,6 +1737,442 @@ const filteredDrivers = availableDrivers.filter(driver => {
             </svg>
           )}
           {selectedDriver ? `Assign ${selectedDriver.name}` : 'Assign Driver'}
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
+
+
+{showHiresModal && (
+  <div style={{
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 1000,
+    backdropFilter: 'blur(5px)'
+  }}>
+    <div style={{
+      backgroundColor: '#fff',
+      borderRadius: '12px',
+      boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+      width: '95%',
+      maxWidth: '1200px',
+      maxHeight: '90vh',
+      overflow: 'auto',
+      position: 'relative',
+      animation: 'modalFadeIn 0.3s ease-out'
+    }}>
+      <div style={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        borderBottom: '1px solid #e5e7eb',
+        padding: '16px 24px',
+        backgroundColor: '#f8fafc',
+        position: 'sticky',
+        top: 0,
+        zIndex: 10
+      }}>
+        <h2 style={{
+          fontSize: '1.5rem',
+          fontWeight: '600',
+          color: '#1e293b',
+          margin: 0
+        }}>Business & Customer Hires</h2>
+        <button 
+          style={{
+            background: 'none',
+            border: 'none',
+            fontSize: '1.8rem',
+            color: '#64748b',
+            cursor: 'pointer',
+            transition: 'color 0.2s',
+            padding: '5px',
+            borderRadius: '50%',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            width: '36px',
+            height: '36px'
+          }}
+          onClick={() => setShowHiresModal(false)}
+          onMouseOver={(e) => e.currentTarget.style.color = '#ef4444'}
+          onMouseOut={(e) => e.currentTarget.style.color = '#64748b'}
+        >
+          &times;
+        </button>
+      </div>
+      
+      <div style={{
+        padding: '0 24px 24px'
+      }}>
+        {loadingHires ? (
+          <div style={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            padding: '40px 0'
+          }}>
+            <div style={{
+              display: 'inline-block',
+              width: '40px',
+              height: '40px',
+              border: '4px solid #e2e8f0',
+              borderTopColor: '#3b82f6',
+              borderRadius: '50%',
+              animation: 'spin 1s linear infinite'
+            }}></div>
+            <style>
+              {`
+                @keyframes spin {
+                  0% { transform: rotate(0deg); }
+                  100% { transform: rotate(360deg); }
+                }
+              `}
+            </style>
+          </div>
+        ) : allHires.length === 0 ? (
+          <div style={{
+            textAlign: 'center',
+            padding: '40px 0',
+            color: '#64748b'
+          }}>
+            No business or customer hires found.
+          </div>
+        ) : (
+          <>
+            <div style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              margin: '16px 0',
+              padding: '8px 16px',
+              backgroundColor: '#f8fafc',
+              borderRadius: '8px'
+            }}>
+              <div>Total: <strong>{allHires.length}</strong> hires</div>
+              <div>
+              <input
+  type="text"
+  placeholder="Search hires..."
+  value={hiresSearchTerm}
+  onChange={(e) => setHiresSearchTerm(e.target.value)}
+  style={{
+    padding: '8px 12px',
+    borderRadius: '6px',
+    border: '1px solid #e2e8f0',
+    fontSize: '0.875rem'
+  }}
+/>
+              </div>
+            </div>
+            
+            <div style={{
+              borderRadius: '8px',
+              overflow: 'hidden',
+              border: '1px solid #e5e7eb'
+            }}>
+              <table style={{
+                width: '100%',
+                borderCollapse: 'collapse'
+              }}>
+                <thead>
+                  <tr style={{
+                    backgroundColor: '#f8fafc',
+                    borderBottom: '1px solid #e5e7eb'
+                  }}>
+                    <th style={{
+                      textAlign: 'left',
+                      padding: '12px 16px',
+                      fontSize: '0.875rem',
+                      fontWeight: '600',
+                      color: '#475569'
+                    }}>Customer</th>
+                    <th style={{
+                      textAlign: 'left',
+                      padding: '12px 16px',
+                      fontSize: '0.875rem',
+                      fontWeight: '600',
+                      color: '#475569'
+                    }}>Type</th>
+                    <th style={{
+                      textAlign: 'left',
+                      padding: '12px 16px',
+                      fontSize: '0.875rem',
+                      fontWeight: '600',
+                      color: '#475569'
+                    }}>Pickup</th>
+                    <th style={{
+                      textAlign: 'left',
+                      padding: '12px 16px',
+                      fontSize: '0.875rem',
+                      fontWeight: '600',
+                      color: '#475569'
+                    }}>Drop-off</th>
+                    <th style={{
+                      textAlign: 'left',
+                      padding: '12px 16px',
+                      fontSize: '0.875rem',
+                      fontWeight: '600',
+                      color: '#475569'
+                    }}>Date & Time</th>
+                    <th style={{
+                      textAlign: 'left',
+                      padding: '12px 16px',
+                      fontSize: '0.875rem',
+                      fontWeight: '600',
+                      color: '#475569'
+                    }}>Driver</th>
+                    <th style={{
+                      textAlign: 'left',
+                      padding: '12px 16px',
+                      fontSize: '0.875rem',
+                      fontWeight: '600',
+                      color: '#475569'
+                    }}>Status</th>
+                    <th style={{
+                      textAlign: 'left',
+                      padding: '12px 16px',
+                      fontSize: '0.875rem',
+                      fontWeight: '600',
+                      color: '#475569'
+                    }}>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                {filteredModalHires.map((hire, index) => {
+                    const customerName = hire.expand?.user_id?.full_name || 'Unknown Customer';
+                    const customerType = hire.user_type || 'Unknown';
+                    const formattedType = customerType === 'business_customer' 
+                      ? 'Business' 
+                      : (customerType === 'customer' || customerType === 'customer') 
+                        ? 'customer' 
+                        : customerType;
+                    
+                    // Get driver info if assigned
+                    const driverId = hire.driverid;
+                    let driverName = 'No driver assigned';
+                    if (driverId) {
+                      const driver = availableDrivers.find(d => d.id === driverId);
+                      if (driver) {
+                        driverName = driver.name;
+                      } else {
+                        driverName = 'Assigned Driver';
+                      }
+                    }
+                    
+                    // Get status
+                    let status = 'Pending';
+                    if (hire.is_cancelled) {
+                      status = 'Cancelled';
+                    } else if (hire.is_completed) {
+                      status = 'Completed';
+                    } else if (hire.driverid && !hire.ispending) {
+                      status = 'Accepted';
+                    }
+                    
+                    return (
+                      <tr key={hire.id} style={{
+                        borderBottom: index < allHires.length - 1 ? '1px solid #e5e7eb' : 'none',
+                        backgroundColor: index % 2 === 0 ? '#fff' : '#f8fafc'
+                      }}>
+                        <td style={{
+                          padding: '12px 16px',
+                          fontSize: '0.875rem',
+                          color: '#1e293b'
+                        }}>
+                          <div style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '8px'
+                          }}>
+                            {hire.expand?.user_id?.photo ? (
+                              <img 
+                                src={`http://145.223.21.62:8085/api/files/customer/${hire.expand.user_id.id}/${hire.expand.user_id.photo}`}
+                                alt={customerName}
+                                style={{
+                                  width: '32px',
+                                  height: '32px',
+                                  borderRadius: '50%',
+                                  objectFit: 'cover'
+                                }}
+                              />
+                            ) : (
+                              <div style={{
+                                width: '32px',
+                                height: '32px',
+                                borderRadius: '50%',
+                                backgroundColor: '#e2e8f0',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                color: '#64748b',
+                                fontWeight: '600',
+                                fontSize: '0.875rem'
+                              }}>
+                                {customerName.charAt(0)}
+                              </div>
+                            )}
+                            <div>
+                              <div style={{
+                                fontWeight: '500'
+                              }}>
+                                {customerName}
+                              </div>
+                              <div style={{
+                                fontSize: '0.75rem',
+                                color: '#64748b'
+                              }}>
+                                {hire.primary_phone || hire.expand?.user_id?.phonenumber || 'No phone'}
+                              </div>
+                            </div>
+                          </div>
+                        </td>
+                        <td style={{
+                          padding: '12px 16px',
+                          fontSize: '0.875rem',
+                          color: '#1e293b'
+                        }}>
+                          <span style={{
+                            display: 'inline-block',
+                            padding: '4px 8px',
+                            borderRadius: '4px',
+                            fontSize: '0.75rem',
+                            fontWeight: '500',
+                            backgroundColor: customerType === 'business_customer' ? '#dbeafe' : '#ecfdf5',
+                            color: customerType === 'business_customer' ? '#1e40af' : '#047857'
+                          }}>
+                            {formattedType}
+                          </span>
+                        </td>
+                        <td style={{
+                          padding: '12px 16px',
+                          fontSize: '0.875rem',
+                          color: '#1e293b'
+                        }}>
+                          {hire.pick_location}
+                        </td>
+                        <td style={{
+                          padding: '12px 16px',
+                          fontSize: '0.875rem',
+                          color: '#1e293b'
+                        }}>
+                          {hire.drop_off_location}
+                        </td>
+                        <td style={{
+                          padding: '12px 16px',
+                          fontSize: '0.875rem',
+                          color: '#1e293b'
+                        }}>
+                          <div>{formatDate(hire.date)}</div>
+                          <div style={{
+                            fontSize: '0.75rem',
+                            color: '#64748b'
+                          }}>
+                            {formatTime(hire.created1)}
+                          </div>
+                        </td>
+                        <td style={{
+                          padding: '12px 16px',
+                          fontSize: '0.875rem',
+                          color: driverId ? '#1e293b' : '#94a3b8',
+                          fontStyle: driverId ? 'normal' : 'italic'
+                        }}>
+                          {driverName}
+                        </td>
+                        <td style={{
+                          padding: '12px 16px',
+                          fontSize: '0.875rem'
+                        }}>
+                          <span style={{
+                            display: 'inline-block',
+                            padding: '4px 8px',
+                            borderRadius: '4px',
+                            fontSize: '0.75rem',
+                            fontWeight: '500',
+                            backgroundColor: 
+                              status === 'Pending' ? '#fef3c7' :
+                              status === 'Accepted' ? '#e0f2fe' :
+                              status === 'Completed' ? '#d1fae5' :
+                              '#fee2e2',
+                            color: 
+                              status === 'Pending' ? '#d97706' :
+                              status === 'Accepted' ? '#0369a1' :
+                              status === 'Completed' ? '#065f46' :
+                              '#b91c1c'
+                          }}>
+                            {status}
+                          </span>
+                        </td>
+                        <td style={{
+                          padding: '12px 16px',
+                          fontSize: '0.875rem'
+                        }}>
+                          <button
+                            onClick={() => {
+                              // Show detail modal for this hire
+                              setCurrentHire(hire);
+                              setShowAssignModal(true);
+                              setShowHiresModal(false);
+                            }}
+                            style={{
+                              backgroundColor: '#f1f5f9',
+                              border: 'none',
+                              padding: '6px 12px',
+                              borderRadius: '6px',
+                              fontSize: '0.875rem',
+                              fontWeight: '500',
+                              color: '#475569',
+                              cursor: 'pointer',
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: '4px'
+                            }}
+                          >
+                            <FaEye size={14} /> View
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </>
+        )}
+      </div>
+      
+      <div style={{
+        display: 'flex',
+        justifyContent: 'flex-end',
+        padding: '16px 24px',
+        borderTop: '1px solid #e5e7eb',
+        backgroundColor: '#f8fafc',
+        position: 'sticky',
+        bottom: 0
+      }}>
+        <button 
+          style={{
+            backgroundColor: '#fff',
+            border: '1px solid #cbd5e1',
+            padding: '10px 16px',
+            borderRadius: '8px',
+            fontSize: '0.95rem',
+            fontWeight: '500',
+            color: '#475569',
+            cursor: 'pointer'
+          }}
+          onClick={() => setShowHiresModal(false)}
+        >
+          Close
         </button>
       </div>
     </div>
